@@ -26,9 +26,13 @@
 
 RF24 radio(pin_radio_CE, pin_radio_CSN);
 
+const byte addresses [] [6] = {"00001", "00002"};
+
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
+
+  Wire.begin();
 
   pinMode(pinButton1, INPUT);
   pinMode(pinButton2, INPUT);
@@ -38,7 +42,6 @@ void setup() {
   pinMode(pinSensorDTH22, INPUT);
   pinMode(pinBuzzer, OUTPUT);
   pinMode(pinDigitalSensorMq2, INPUT);
-
 
   // Define the radio communication
   radio.begin();
@@ -51,6 +54,8 @@ void setup() {
   radio.openReadingPipe(1, addresses[1]); // 00002
   radio.setAutoAck(true);
   radio.startListening();
+
+
 }
 
 void loop() {
