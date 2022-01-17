@@ -24,6 +24,7 @@
 //Definition Analog Pin
 #define pinSensorMq2 A2
 
+RF24 radio(pin_radio_CE, pin_radio_CSN);
 
 void setup() {
   // put your setup code here, to run once:
@@ -37,6 +38,19 @@ void setup() {
   pinMode(pinSensorDTH22, INPUT);
   pinMode(pinBuzzer, OUTPUT);
   pinMode(pinDigitalSensorMq2, INPUT);
+
+
+  // Define the radio communication
+  radio.begin();
+  //radio.enableDynamicPayloads();
+  radio.setDataRate(RF24_250KBPS);
+  radio.setPALevel(RF24_PA_MIN);
+  radio.setChannel(125);
+  //radio.setRetries(15, 15);
+  radio.openWritingPipe(addresses[0]); // 00001
+  radio.openReadingPipe(1, addresses[1]); // 00002
+  radio.setAutoAck(true);
+  radio.startListening();
 }
 
 void loop() {
