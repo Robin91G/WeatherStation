@@ -69,31 +69,63 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-screen.clearDisplay(); //for Clearing the display
+ drawInTemperatureBitmap();
+ drawInHumidityBitmap();
+
+}
+
+//affichage indoor
+void drawIndoor(const uint8_t *bitmap) {
+
+  screen.clearDisplay(); //for Clearing the display
 
   screen.setTextSize(2);
   screen.setCursor(screen.width() / 6, 0);
 
   screen.println("INDOOR");
-  //screen.drawBitmap(0, (screen.height() - sizeBitmap), bitmap, sizeBitmap, sizeBitmap, WHITE); // display.drawBitmap(x position, y position, bitmap data, bitmap width, bitmap height, color)
+  screen.drawBitmap(0, (screen.height() - sizeBitmap), bitmap, sizeBitmap, sizeBitmap, WHITE); // display.drawBitmap(x position, y position, bitmap data, bitmap width, bitmap height, color)
 
   screen.setTextSize(2);
   screen.setCursor(screen.width() / 2, screen.height() / 2);
+}
 
-readDHT22 = DHT.read22(pinSensorDTH22); // Reads the data from the sensor
-screen.clearDisplay();
-temperatureIndoor = DHT.temperature; // Gets the values of the temperature
+//lecture du capteur DHT22 interieur
+void readDht22SensorIndoor() {
+  readDHT22 = DHT.read22(pinSensorDTH22); // Reads the data from the sensor
+}
+
+//defintition de la temperature interieur
+void setTemperatureIndoor() {
+  readDht22SensorIndoor();
+
+  temperatureIndoor = DHT.temperature; // Gets the values of the temperature
   inTemp = String(temperatureIndoor) + char(247) + "C";
+}
 
-   screen.print(inTemp);
+//affichage de la température interieur
+void drawInTemperatureBitmap() {
+  drawIndoor(temperatureBitmap);
+
+  setTemperatureIndoor();
+
+  screen.print(inTemp);
   screen.display();
-screen.clearDisplay();
+}
+
+//defintition de l'humidité interieur
+void setHumidityIndoor() {
+  readDht22SensorIndoor();
 
   humidityIndoor = DHT.humidity; // Gets the values of the humidity
   inHum = String(humidityIndoor) + char(37);
+}
+
+//affichage de l'humidité interieur
+void drawInHumidityBitmap() {
+  drawIndoor(humidityBitmap);
+
+  setHumidityIndoor();
 
   screen.print(inHum);
   screen.display();
-
- 
 }
