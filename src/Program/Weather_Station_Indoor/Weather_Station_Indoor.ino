@@ -26,6 +26,10 @@
 
 RF24 radio(pin_radio_CE, pin_radio_CSN);
 Adafruit_SSD1306 screen(128, 64, &Wire, pinButtonOledReset);
+RTC_DS3231 dateTime;
+dht DHT;
+
+DateTime now;
 
 const byte addresses [] [6] = {"00001", "00002"};
 
@@ -124,14 +128,51 @@ void setup() {
   screen.print("Initialisation...");
   screen.display();
   delay(2000); // Pause for 2 seconds
-
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
+  setDateTime()
+  delay(3000);
  drawInTemperatureBitmap();
+  delay(3000);
  drawInHumidityBitmap();
+ delay(3000);
+}
 
+//definition heure / date et affichage ecran oled
+void setDateTime() {
+  screen.clearDisplay();
+
+  now = dateTime.now();
+
+  screen.setTextSize(1);
+  //screen.setTextColor(WHITE);
+  //screen.setFont();
+  screen.setCursor(screen.width() / 9, 0);
+
+  screen.print(daysOfTheWeek[now.dayOfTheWeek()]);
+  screen.print(' ');
+  screen.print(now.day(), DEC);
+  screen.print('/');
+  if (now.month() < 10) {
+    screen.print('0');
+  }
+  screen.print(now.month(), DEC);
+  screen.print('/');
+  screen.print(now.year(), DEC);
+
+  screen.setTextSize(3);
+  screen.setCursor(screen.width() / 7, screen.height() / 2);
+
+  screen.print(now.hour(), DEC);
+  screen.print(':');
+  if (now.minute() < 10) {
+    screen.print('0');
+  }
+  screen.print(now.minute(), DEC);
+
+  screen.display();
 }
 
 //affichage indoor
