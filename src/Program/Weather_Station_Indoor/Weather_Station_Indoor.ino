@@ -44,6 +44,9 @@ void setup() {
   pinMode(pinBuzzer, OUTPUT);
   pinMode(pinDigitalSensorMq2, INPUT);
 
+  attachInterrupt(digitalPinToInterrupt(pinButton1), readStateButton, FALLING);
+  attachInterrupt(digitalPinToInterrupt(pinButton2), readStateButton, FALLING);
+
   // Define the radio communication
   radio.begin();
   //radio.enableDynamicPayloads();
