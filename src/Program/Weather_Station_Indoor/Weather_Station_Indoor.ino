@@ -25,6 +25,7 @@
 #define pinSensorMq2 A2
 
 RF24 radio(pin_radio_CE, pin_radio_CSN);
+Adafruit_SSD1306 screen(128, 64, &Wire, pinButtonOledReset);
 
 const byte addresses [] [6] = {"00001", "00002"};
 
@@ -55,6 +56,11 @@ void setup() {
   radio.setAutoAck(true);
   radio.startListening();
 
+  screen.begin(SSD1306_SWITCHCAPVCC, 0x3C); //or 0x3C
+  screen.setTextColor(WHITE);
+  screen.print("Initialisation...");
+  screen.display();
+  delay(2000); // Pause for 2 seconds
 
 }
 
