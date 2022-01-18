@@ -29,7 +29,7 @@ Adafruit_SSD1306 screen(128, 64, &Wire, pinButtonOledReset);
 
 const byte addresses [] [6] = {"00001", "00002"};
 
-//strure of data
+//structure of data
 struct Weather_Station {
   int temperatureOutdoor;
   int humidityOutdoor;
@@ -42,12 +42,13 @@ struct Weather_Station {
   int windDirectionOutdoor;
   int windSpeedOutdoor;
 };
-
 Weather_Station data; //Create a variable with the above structure
 
-int readDHT22, temperatureIndoor, humidityIndoor;
-String inTemp, inHum;
+const int windValueDirection [8] = {753, 79, 253, 931, 418, 160, 589, 866};
+const String windDirection [8] = {"N", "E", "S", "W", "NE", "SE", "SW", "NW"};
 
+int readDHT22, temperatureIndoor, humidityIndoor, temperatureOutdoor, humidityOutdoor, rainIntensity, intensityLightOutdoor, uvIndexOutdoor, airQualityOutdoor, pressureAtmoOutdoor, windDirectionOutdoor, windSpeedOutdoor;
+String inTemp, inHum, inGas, outTemp, outHum, outRain, outLight, outUv, outPressure, outAir, outWindDir, outWindSpeed;
 
 //taille Bitmap
 const int sizeBitmap = 40;
