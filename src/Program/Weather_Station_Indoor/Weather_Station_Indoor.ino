@@ -69,5 +69,31 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+screen.clearDisplay(); //for Clearing the display
 
+  screen.setTextSize(2);
+  screen.setCursor(screen.width() / 6, 0);
+
+  screen.println("INDOOR");
+  //screen.drawBitmap(0, (screen.height() - sizeBitmap), bitmap, sizeBitmap, sizeBitmap, WHITE); // display.drawBitmap(x position, y position, bitmap data, bitmap width, bitmap height, color)
+
+  screen.setTextSize(2);
+  screen.setCursor(screen.width() / 2, screen.height() / 2);
+
+readDHT22 = DHT.read22(pinSensorDTH22); // Reads the data from the sensor
+screen.clearDisplay();
+temperatureIndoor = DHT.temperature; // Gets the values of the temperature
+  inTemp = String(temperatureIndoor) + char(247) + "C";
+
+   screen.print(inTemp);
+  screen.display();
+screen.clearDisplay();
+
+  humidityIndoor = DHT.humidity; // Gets the values of the humidity
+  inHum = String(humidityIndoor) + char(37);
+
+  screen.print(inHum);
+  screen.display();
+
+ 
 }
