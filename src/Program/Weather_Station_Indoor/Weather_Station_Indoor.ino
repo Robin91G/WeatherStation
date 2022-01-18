@@ -29,6 +29,22 @@ Adafruit_SSD1306 screen(128, 64, &Wire, pinButtonOledReset);
 
 const byte addresses [] [6] = {"00001", "00002"};
 
+//strure of data
+struct Weather_Station {
+  int temperatureOutdoor;
+  int humidityOutdoor;
+  int rainIntensity;
+  int intensityLightOutdoor;
+  int uvIndexOutdoor;
+  int pressureAtmoOutdoor;
+  int altitudeOutdoor;
+  int airQualityOutdoor;
+  int windDirectionOutdoor;
+  int windSpeedOutdoor;
+};
+
+Weather_Station data; //Create a variable with the above structure
+
 int readDHT22, temperatureIndoor, humidityIndoor;
 String inTemp, inHum;
 
