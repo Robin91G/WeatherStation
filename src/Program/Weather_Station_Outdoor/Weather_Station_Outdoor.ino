@@ -73,7 +73,8 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   setTemperatureOutdoor();
-  setHumidityOutdoor()
+  setHumidityOutdoor();
+  setPressureAtmoOutdoor();
 
 for (int i = 0; i <= 3; i++) {           // Send the data 3 times
     radio.write(&data, sizeof(Weather_Station));
