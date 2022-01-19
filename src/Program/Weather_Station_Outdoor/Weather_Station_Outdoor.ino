@@ -67,13 +67,26 @@ void setup() {
 
   lightMeter.begin();
   uvIndex.begin(VEML6070_1_T);
+  initBMP180()
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
+  setTemperatureOutdoor();
+  setHumidityOutdoor()
+
 for (int i = 0; i <= 3; i++) {           // Send the data 3 times
     radio.write(&data, sizeof(Weather_Station));
     delay(50);
+  }
+}
+
+void initBMP180() {
+  if (pressure.begin()) { //If initialization was successful, continue
+    Serial.println("BMP180 init success");
+  } else {
+    //Else, stop code forever
+    Serial.println("BMP180 init fail");
   }
 }
 
@@ -93,4 +106,28 @@ void setHumidityOutdoor() {
 
   humidityOutdoor = DHT.humidity;
   data.humidityOutdoor = humidityOutdoor; // Gets the values of the humidity
+}
+
+
+void setPressureAtmoOutdoor() {
+
+  statusBmp180 = pressure.startTemperature();
+  delay(statusBmp180);
+  statusBmp180 = pressure.getTemperature(outTemp);
+
+  statusBmp180 = pressure.startPressure(3);
+  delay(statusBmp180);
+  statusBmp180 = pressure.getPressure(outPressure, outTemp);
+
+  data.pressureAtmoOutdoor = int(outPressure);
+
+  /*double p0 = pressure.sealevel(outPressure, seaAltitude);
+
+    Serial.print("relative (sea-level) pressure: ");
+    Serial.println(p0);
+
+    outAltitude = pressure.altitude(outPressure, p0);
+    Serial.print(" Altitude : " ) ;
+    Serial.print(outAltitude);
+    Serial.println( " Mètres ");*/
 }
