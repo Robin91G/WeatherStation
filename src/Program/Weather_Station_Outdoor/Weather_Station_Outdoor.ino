@@ -47,7 +47,26 @@ double outTemp, outPressure, outAltitude;
 
 void setup() {
   // put your setup code here, to run once:
+  Serial.begin(9600);
 
+  Wire.begin();
+
+  // Define the radio communication
+  radio.begin();
+  //radio.enableDynamicPayloads();
+  radio.setDataRate(RF24_250KBPS);
+  radio.setPALevel(RF24_PA_LOW);
+  radio.setChannel(125);
+  //radio.setRetries(15, 15);
+  radio.openWritingPipe(addresses[1]); // 00002
+  radio.openReadingPipe(1, addresses[0]); // 00001
+  radio.setAutoAck(true);
+  radio.stopListening();
+
+  softSerial.begin(115200);
+
+  lightMeter.begin();
+  uvIndex.begin(VEML6070_1_T);
 }
 
 void loop() {
