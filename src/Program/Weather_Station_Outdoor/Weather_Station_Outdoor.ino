@@ -74,6 +74,9 @@ void loop() {
   // put your main code here, to run repeatedly:
   setTemperatureOutdoor();
   setHumidityOutdoor();
+  setRainIntensity();
+  setIntensityLight();
+  setUvIndex();
   setPressureAtmoOutdoor();
 
 for (int i = 0; i <= 3; i++) {           // Send the data 3 times
@@ -107,6 +110,21 @@ void setHumidityOutdoor() {
 
   humidityOutdoor = DHT.humidity;
   data.humidityOutdoor = humidityOutdoor; // Gets the values of the humidity
+}
+
+void setRainIntensity() {
+  rainIntensity = analogRead(pinRainSensor);
+  data.rainIntensity = int(rainIntensity);
+}
+
+void setIntensityLight() {
+  intensityLightOutdoor = lightMeter.readLightLevel();
+  data.intensityLightOutdoor = intensityLightOutdoor;
+}
+
+void setUvIndex() {
+  uvIndexOutdoor = uvIndex.readUV();
+  data.uvIndexOutdoor = uvIndexOutdoor;
 }
 
 
