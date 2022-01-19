@@ -71,5 +71,26 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+for (int i = 0; i <= 3; i++) {           // Send the data 3 times
+    radio.write(&data, sizeof(Weather_Station));
+    delay(50);
+  }
+}
 
+void readSensorDTH22Outdoor() {
+  readDHT22 = DHT.read22(pinSensorDTH22); // Reads the data from the sensor
+}
+
+void setTemperatureOutdoor() {
+  readSensorDTH22Outdoor();
+
+  temperatureOutdoor = DHT.temperature;
+  data.temperatureOutdoor = temperatureOutdoor;// Gets the values of the temperature
+}
+
+void setHumidityOutdoor() {
+  readSensorDTH22Outdoor();
+
+  humidityOutdoor = DHT.humidity;
+  data.humidityOutdoor = humidityOutdoor; // Gets the values of the humidity
 }
