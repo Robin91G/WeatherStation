@@ -366,3 +366,248 @@ void drawInHumidityBitmap() {
   screen.print(inHum);
   screen.display();
 }
+
+void readSensorMq2() {
+  float* gasIndoor = mq2.read(true); //set it false if you don't want to print the values in the Serial
+
+      //lpg = values[0];
+      lpg = mq2.readLPG();
+      //co = values[1];
+      co = mq2.readCO();
+      //smoke = values[2];
+      smoke = mq2.readSmoke();
+
+  Serial.print("LPG:");
+    Serial.println(lpg);
+    Serial.print(" CO:");
+    Serial.println(co);
+    Serial.print("SMOKE:");
+    Serial.print(smoke);
+    Serial.println(" PPM");
+
+  //inGas = String(lpg);
+}
+
+void setGasIndoor() {
+  readSensorMq2();
+  inGas = String(lpg);
+}
+
+void drawInGasBitmap() {
+  drawIndoor(gasBitmap);
+
+  setGasIndoor();
+
+  screen.print(inGas);
+  screen.display();
+}
+
+/**Module Station Outdoor**/
+//affichage outdoor
+void drawOutdoor(const uint8_t *bitmap) {
+  screen.clearDisplay(); //for Clearing the display
+
+  screen.setTextSize(2);
+  screen.setCursor(screen.width() / 6, 0);
+
+  screen.println("OUTDOOR");
+
+  screen.drawBitmap(0, (screen.height() - sizeBitmap), bitmap, sizeBitmap, sizeBitmap, WHITE); // display.drawBitmap(x position, y position, bitmap data, bitmap width, bitmap height, color)
+
+  screen.setTextSize(2);
+  screen.setCursor(screen.width() / 2, screen.height() / 2);
+}
+
+//récupération de la température exterieur
+void getTemperatureOutdoor() {
+  temperatureOutdoor =  data.temperatureOutdoor;
+  outTemp = String(temperatureOutdoor) + " " + char(247) + 'C';
+}
+
+//affichage de la température exterieur
+void drawOutTemperatureBitmap() {
+  drawOutdoor(temperatureBitmap);
+
+  getTemperatureOutdoor();
+
+  screen.print(outTemp);
+  screen.display();
+}
+
+//récupération de l'humidité exterieur
+void getHumidityOutdoor() {
+  humidityOutdoor = data.humidityOutdoor;
+  outHum = String(humidityOutdoor) + " " + char(37);
+}
+
+//affichage de l'humidité exterieur
+void drawOutHumidityBitmap() {
+  drawOutdoor(humidityBitmap);
+
+  getHumidityOutdoor();
+
+  screen.print(outHum);
+  screen.display();
+}
+
+//récupération de l'intensité de la pluie exterieur
+void getRainIntensityOutdoor() {
+  rainIntensity = data.rainIntensity;
+  outRain = String(rainIntensity);
+}
+
+//affichage de l'intensite de la pluie exterieur
+void drawOutRainIntensityBitmap() {
+  drawOutdoor(rainBitmap);
+
+  getRainIntensityOutdoor();
+
+  screen.print(outRain);
+  screen.display();
+}
+
+//récupération de lintensité lumineuse exterieur
+void getIntensityLightOutdoor() {
+  intensityLightOutdoor = data.intensityLightOutdoor;
+  outLight = String(intensityLightOutdoor) + " lux";
+}
+
+//affichage de la intensité lumineuse exterieur
+void drawOutIntensityLightBitmap() {
+  drawOutdoor(lightBitmap);
+
+  getIntensityLightOutdoor();
+
+  screen.print(outLight);
+  screen.display();
+}
+
+//récupération de l'indice UV exterieur
+void getUvIndexOutddor() {
+  uvIndexOutdoor = data.uvIndexOutdoor;
+  outUv = String(uvIndexOutdoor);
+}
+
+//affichage de l'indice uv exterieur
+void drawOutUvIndexBitmap() {
+  drawOutdoor(uvBitmap);
+
+  getUvIndexOutddor();
+
+  screen.println(outUv);
+
+  screen.setTextSize(1);
+
+  if (uvIndexOutdoor <= 2) {
+    screen.setCursor(52, 54);
+    screen.print("Faible");
+  } else if (uvIndexOutdoor > 2 && uvIndexOutdoor <= 5) {
+    screen.setCursor(54, 54);
+    screen.print("Moyen");
+  } else if (uvIndexOutdoor > 5 && uvIndexOutdoor <= 7) {
+    screen.setCursor(53, 54);
+    screen.print("Eleve");
+  } else if (uvIndexOutdoor > 7 && uvIndexOutdoor <= 10) {
+    screen.setCursor(44, 54);
+    screen.print("Tres Eleve");
+  } else if (uvIndexOutdoor >= 11) {
+    screen.setCursor(55, 54);
+    screen.print("Extreme");
+  }
+
+  screen.display();
+}
+
+//récupération de qualité air exterieur
+void getAirQualityOutdoor() {
+  airQualityOutdoor = data.airQualityOutdoor;
+  outAir = String(airQualityOutdoor) + " ppm";
+}
+
+//affichage de la qualite de l'air exterieur
+void drawOutAirQualityBitmap() {
+  drawOutdoor(airQaualityBitmap);
+
+  getAirQualityOutdoor();
+
+  screen.print(outAir);
+  screen.display();
+}
+
+//récupération de la pression atmosphèrique exterieur
+void getPressureAtmoOutdoor() {
+  pressureAtmoOutdoor = data.pressureAtmoOutdoor;
+  outPressure = String(pressureAtmoOutdoor) + " hPa";
+}
+
+//affichage de la pression atmosphèrique exterieur
+void drawOutPressureAtmoBitmap() {
+  drawOutdoor(pressureAtmoBitmap);
+
+  getPressureAtmoOutdoor();
+
+  screen.print(outPressure);
+  screen.display();
+}
+
+
+//récupération de la direction du vent
+void getWindDirectionOutdoor() {
+  windDirectionOutdoor = data.windDirectionOutdoor;
+
+  if (windDirectionOutdoor == windValueDirection[0]) {
+    Serial.println(windDirectionOutdoor);
+    outWindDir = windDirection[0];
+  } else if (windDirectionOutdoor == windValueDirection[1]) {
+    Serial.println(windDirection[1]);
+    outWindDir = windDirection[1];
+  } else if (windDirectionOutdoor == windValueDirection[2]) {
+    Serial.println(windDirection[2]);
+    outWindDir = windDirection[2];
+  } else if (windDirectionOutdoor == windValueDirection[3]) {
+    Serial.println(windDirection[3]);
+    outWindDir = windDirection[3];
+  } else if (windDirectionOutdoor == windValueDirection[4]) {
+    Serial.println(windDirection[4]);
+    outWindDir = windDirection[4];
+  } else if (windDirectionOutdoor == windValueDirection[5]) {
+    Serial.println(windDirection[5]);
+    outWindDir = windDirection[5];
+  } else if (windDirectionOutdoor == windValueDirection[6]) {
+    Serial.println(windDirection[6]);
+    outWindDir = windDirection[6];
+  } else if (windDirectionOutdoor == windValueDirection[7]) {
+    Serial.println(windDirection[7]);
+    outWindDir = windDirection[7];
+  } else {
+    Serial.println("other");
+  }
+}
+
+//affichage de la direction du vent exterieur
+void drawOutWindDirectionBitmap() {
+  drawOutdoor(windBitmap);
+
+  getWindDirectionOutdoor();
+
+  screen.print(outWindDir);
+  screen.display();
+}
+
+
+//récupération de la vitesse du vent
+void getWindSpeedOutdoor() {
+  windSpeedOutdoor = data.windSpeedOutdoor;
+
+  outWindSpeed =  String(windSpeedOutdoor) + "km" + char(47) + "h";
+}
+
+//affichage de la vitesse du vent
+void drawOutWindBitmap() {
+  drawOutdoor(windBitmap);
+
+  getWindSpeedOutdoor();
+
+  screen.print(outWindSpeed);
+  screen.display();
+}
