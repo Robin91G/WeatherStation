@@ -78,6 +78,8 @@ void loop() {
   setIntensityLight();
   setUvIndex();
   setPressureAtmoOutdoor();
+  setAirQuality();
+  setWindOutdoor();
 
 for (int i = 0; i <= 3; i++) {           // Send the data 3 times
     radio.write(&data, sizeof(Weather_Station));
@@ -128,6 +130,30 @@ void setUvIndex() {
 }
 
 
+void setAirQuality() {
+  /* airQualityOutdoor = analogRead(pinGasSensor);
+
+    data.airQualityOutdoor = airQualityOutdoor;*/
+
+  float rzero = mq135_sensor.getRZero();
+  float correctedRZero = mq135_sensor.getCorrectedRZero(temperatureOutdoor, humidityOutdoor);
+  float resistance = mq135_sensor.getResistance();
+  float ppm = mq135_sensor.getPPM();
+  float correctedPPM = mq135_sensor.getCorrectedPPM(temperatureOutdoor, humidityOutdoor);
+
+  Serial.print("MQ135 RZero: ");
+  Serial.print(int(rzero));
+  Serial.print("\t Corrected RZero: ");
+  Serial.print(int(correctedRZero));
+  Serial.print("\t Resistance: ");
+  Serial.print(int(resistance));
+  Serial.print("\t PPM: ");
+  Serial.print(int(ppm));
+  Serial.print("\t Corrected PPM: ");
+  Serial.print(int(correctedPPM));
+  Serial.println("ppm");
+}
+
 void setPressureAtmoOutdoor() {
 
   statusBmp180 = pressure.startTemperature();
@@ -149,4 +175,36 @@ void setPressureAtmoOutdoor() {
     Serial.print(" Altitude : " ) ;
     Serial.print(outAltitude);
     Serial.println( " Mètres ");*/
+}
+
+
+void setWindOutdoor() {
+  windDirectionOutdoor = analogRead(pinGirouette);
+  if (windDirectionOutdoor >= windValue[0][1] && windDirectionOutdoor <= windValue[0][2]) {
+    Serial.println(windDirection[0][0]);
+    data.windDirectionOutdoor = windDirection[0][0];
+  } else if (windDirectionOutdoor >= windValue[1][1] && windDirectionOutdoor <= windValue[1][2]) {
+    Serial.println(windDirection[1][0]);
+    data.windDirectionOutdoor = windDirection[1][0];
+  } else if (windDirectionOutdoor >= windValue[2][1] && windDirectionOutdoor <= windValue[2][2]) {
+    Serial.println(windDirection[2][0]);
+    data.windDirectionOutdoor = windDirection[2][0];
+  } else if (windDirectionOutdoor >= windValue[3][1] && windDirectionOutdoor <= windValue[3][2]) {
+    Serial.println(windDirection[3][0]);
+    data.windDirectionOutdoor = windDirection[3][0];
+  } else if (windDirectionOutdoor >= windValue[4][1] && windDirectionOutdoor <= windValue[4][2]) {
+    Serial.println(windDirection[4][0]);
+    data.windDirectionOutdoor = windDirection[4][0];
+  } else if (windDirectionOutdoor >= windValue[5][1] && windDirectionOutdoor <= windValue[5][2]) {
+    Serial.println(windDirection[5][0]);
+    data.windDirectionOutdoor = windDirection[5][0];
+  } else if (windDirectionOutdoor >= windValue[6][1] && windDirectionOutdoor <= windValue[6][2]) {
+    Serial.println(windDirection[6][0]);
+    data.windDirectionOutdoor = windDirection[6][0];
+  } else if (windDirectionOutdoor >= windValue[7][1] && windDirectionOutdoor <= windValue[7][2]) {
+    Serial.println(windDirection[7][0]);
+    data.windDirectionOutdoor = windDirection[7][0];
+  } else {
+    Serial.println("other");
+  }
 }
