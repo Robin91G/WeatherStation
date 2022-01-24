@@ -19,7 +19,7 @@
 #define pinSensorDTH22 9
 #define pinBuzzer 10
 #define pinButtonOledReset 14 //A0
-#define pinDigitalSensorMq2  15 //A1
+#define pinDigitalSensorMq2 15 //A1
 
 //Definition Analog Pin
 #define pinSensorMq2 A2
@@ -28,12 +28,12 @@ RF24 radio(pin_radio_CE, pin_radio_CSN);
 Adafruit_SSD1306 screen(128, 64, &Wire, pinButtonOledReset);
 RTC_DS3231 dateTime;
 dht DHT;
-
+MQ2 mq2(pinSensorMq2);
 DateTime now;
 
 const byte addresses [] [6] = {"00001", "00002"};
 
-//structure of data
+//strure of data
 struct Weather_Station {
   int temperatureOutdoor;
   int humidityOutdoor;
@@ -48,11 +48,19 @@ struct Weather_Station {
 };
 Weather_Station data; //Create a variable with the above structure
 
+const char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+const char monthOfTheYear[12][3] = {"Jan", "Fev", "Mar", "Avr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+
 const int windValueDirection [8] = {753, 79, 253, 931, 418, 160, 589, 866};
 const String windDirection [8] = {"N", "E", "S", "W", "NE", "SE", "SW", "NW"};
 
 int readDHT22, temperatureIndoor, humidityIndoor, temperatureOutdoor, humidityOutdoor, rainIntensity, intensityLightOutdoor, uvIndexOutdoor, airQualityOutdoor, pressureAtmoOutdoor, windDirectionOutdoor, windSpeedOutdoor;
 String inTemp, inHum, inGas, outTemp, outHum, outRain, outLight, outUv, outPressure, outAir, outWindDir, outWindSpeed;
+int lpg, co, smoke;
+char drawState = 'I';
+int buttonPress = 0;
+unsigned long previousMillis = 0;
+long interval = 3000;
 
 //taille Bitmap
 const int sizeBitmap = 40;
@@ -229,6 +237,7 @@ static const unsigned char windBitmap [] PROGMEM = {
 };
 
 
+
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
@@ -259,21 +268,106 @@ void setup() {
   radio.setAutoAck(true);
   radio.startListening();
 
+  if (dateTime.lostPower()) {
+    Serial.println("RTC lost power, let's set the time!");
+    dateTime.adjust(DateTime(F(__DATE__), F(__TIME__)));
+  }
+
+  //mq2.begin();
+
   screen.begin(SSD1306_SWITCHCAPVCC, 0x3C); //or 0x3C
   screen.setTextColor(WHITE);
   screen.print("Initialisation...");
   screen.display();
   delay(2000); // Pause for 2 seconds
+
+  for (int l = 0; l < 5; l++) {
+    digitalWrite(pinLedGreen, HIGH);
+    digitalWrite(pinLedRed, HIGH);
+
+    delay(250);
+
+    digitalWrite(pinLedGreen, LOW);
+    digitalWrite(pinLedRed, LOW);
+
+    delay(250);
+  }
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  setDateTime()
+
+  drawInTemperatureBitmap();
   delay(3000);
- drawInTemperatureBitmap();
+
+  drawInHumidityBitmap();
   delay(3000);
- drawInHumidityBitmap();
- delay(3000);
+
+  drawInGasBitmap();
+  delay(3000);
+
+  if (radio.available()) {
+    radio.read(&data, sizeof(Weather_Station));
+    Serial.println(data.temperatureOutdoor);
+    Serial.println(data.humidityOutdoor);
+    Serial.println(data.rainIntensity);
+    Serial.println(data.intensityLightOutdoor);
+    Serial.println(data.uvIndexOutdoor);
+    Serial.println(data.pressureAtmoOutdoor);
+    Serial.println(data.intensityLightOutdoor);
+    Serial.println(data.uvIndexOutdoor);
+
+    for (int l = 0; l < 4; l++) {
+      digitalWrite(pinLedReceivedData, HIGH);
+      delay(125);
+      digitalWrite(pinLedReceivedData, LOW);
+      delay(125);
+    }
+  }
+
+  drawOutTemperatureBitmap();
+  delay(3000);
+
+  drawOutHumidityBitmap();
+  delay(3000);
+
+  drawOutRainIntensityBitmap();
+  delay(3000);
+
+  drawOutIntensityLightBitmap();
+  delay(3000);
+
+  drawOutUvIndexBitmap();
+  delay(3000);
+
+  drawOutAirQualityBitmap();
+  delay(3000);
+
+  drawOutPressureAtmoBitmap();
+  delay(3000);
+
+  drawOutWindBitmap();
+  delay(3000);
+
+  drawOutWindDirectionBitmap();
+  delay(3000);
+}
+
+/**Module Station Indoor**/
+
+//lecture de l'état du boutton
+void readStateButton() {
+  if (!digitalRead(pinButton1)) { //lors de l'appui du bouton pour enregistrer un nouveau badge
+
+    //while (!digitalRead(pinButton)) {} //anti redéclenchement si on reste appuyé
+    delay(50);
+    if (buttonPress == 0) {
+      buttonPress++;
+    } else if (buttonPress == 1) {
+      buttonPress++;
+    } else {
+      buttonPress = 0;
+    }
+  }
 }
 
 //definition heure / date et affichage ecran oled
@@ -368,29 +462,29 @@ void drawInHumidityBitmap() {
 }
 
 void readSensorMq2() {
-  float* gasIndoor = mq2.read(true); //set it false if you don't want to print the values in the Serial
+  /*float* gasIndoor = mq2.read(true); //set it false if you don't want to print the values in the Serial
 
       //lpg = values[0];
       lpg = mq2.readLPG();
       //co = values[1];
       co = mq2.readCO();
       //smoke = values[2];
-      smoke = mq2.readSmoke();
+      smoke = mq2.readSmoke();*/
 
-  Serial.print("LPG:");
+  /*Serial.print("LPG:");
     Serial.println(lpg);
     Serial.print(" CO:");
     Serial.println(co);
     Serial.print("SMOKE:");
     Serial.print(smoke);
-    Serial.println(" PPM");
+    Serial.println(" PPM");*/
 
   //inGas = String(lpg);
 }
 
 void setGasIndoor() {
   readSensorMq2();
-  inGas = String(lpg);
+  // inGas = String(lpg);
 }
 
 void drawInGasBitmap() {
@@ -598,7 +692,6 @@ void drawOutWindDirectionBitmap() {
 //récupération de la vitesse du vent
 void getWindSpeedOutdoor() {
   windSpeedOutdoor = data.windSpeedOutdoor;
-
   outWindSpeed =  String(windSpeedOutdoor) + "km" + char(47) + "h";
 }
 
